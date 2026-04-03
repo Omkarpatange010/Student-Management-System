@@ -1,20 +1,20 @@
-# Use lightweight Java 17 image
-FROM openjdk:17-jdk-slim
+# Use official Java 17 (Temurin - stable)
+FROM eclipse-temurin:17-jdk
 
 # Set working directory
 WORKDIR /app
 
-# Copy all project files
+# Copy project files
 COPY . .
 
 # Give permission to mvnw
 RUN chmod +x mvnw
 
-# Build the project (skip tests for faster build)
+# Build the project
 RUN ./mvnw clean package -DskipTests
 
-# Expose port (Render uses dynamic PORT)
+# Expose port
 EXPOSE 8080
 
-# Run the generated jar file
+# Run the jar file
 CMD ["sh", "-c", "java -jar target/*.jar"]
