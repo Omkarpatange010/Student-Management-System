@@ -1,0 +1,74 @@
+# Target directory
+/target/
+
+# Maven
+**/target/
+**/pom.xml.tag
+**/pom.xml.releaseBackup
+**/pom.xml.versionsBackup
+**/pom.xml.next
+**/release.properties
+**/dependency-reduced-pom.xml
+**/buildNumber.properties
+**/.mvn/timing.properties
+
+# IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# STS
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# environment / secrets
+.env
+.env.local
+.env.*.local
+credentials.properties
+application-${SPRING_PROFILES_ACTIVE}.properties
+
+# Spring Boot
+/spring-boot-loader/
+
+# keep local configs private
+/local-config/**
+
+# backup files
+*~
+*.swp
+
+# database files
+*.db
+
+# jar and war
+*.jar
+*.war
+
+# avoid accidentally committing secret key files
+**/keystore.jks
+**/jwt-secret.key
+**/id_rsa
+**/id_rsa.pub
+**/*.pem

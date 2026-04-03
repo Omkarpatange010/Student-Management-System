@@ -205,6 +205,25 @@ spring.security.user.password=YourPassword
 spring.security.user.roles=ADMIN
 ```
 
+### **Environment Variables (recommended)**
+
+1. Copy `.env.example` to `.env` and set your real secrets.
+2. Never commit `.env` or credentials files.
+
+Example values:
+```env
+SPRING_DATA_MONGODB_URI=mongodb://localhost:27017/student_management
+SERVER_PORT=8080
+SPRING_SECURITY_USER_NAME=admin@example.com
+SPRING_SECURITY_USER_PASSWORD=YourSuperSecretPassword
+SPRING_SECURITY_USER_ROLES=ADMIN
+APP_JWT_SECRET=ChangeThisToAStrongRandomKey
+SPRING_PROFILES_ACTIVE=dev
+```
+
+> `application.properties` supports `${ENV_VAR}` style placeholders:
+> `spring.data.mongodb.uri=${SPRING_DATA_MONGODB_URI}`
+
 ---
 
 ## 🎯 Running the Application
