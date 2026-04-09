@@ -63,6 +63,9 @@
                                         <td>
                                             <a th:href="@{/admin/edit-student/{id}(id=${item.student.id})}" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a>
                                             <a th:href="@{/admin/delete-student/{id}(id=${item.student.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure? This action cannot be undone.')"><i class="fas fa-trash"></i> Delete</a>
+                                            <a th:href="@{/admin/marks?studentId={id}(id=${item.student.id})}" class="btn btn-info btn-sm"><i class="fas fa-chart-line"></i> Marks</a>
+                                            <a th:href="@{/admin/attendance?studentId={id}(id=${item.student.id})}" class="btn btn-success btn-sm"><i class="fas fa-calendar-check"></i> Attendance</a>
+                                            <a th:href="@{/admin/subjects?studentId={id}(id=${item.student.id})}" class="btn btn-warning btn-sm"><i class="fas fa-book"></i> Subjects</a>
                                         </td>
                                     </tr>
                                     <tr th:if="${#lists.isEmpty(studentsData)}">

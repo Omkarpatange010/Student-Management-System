@@ -12,7 +12,12 @@
             <div class="sidebar-brand"><i class="fas fa-star"></i> Admin Panel</div>
             <ul class="sidebar-nav">
                 <li><a class="sidebar-link active" href="/admin/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a class="sidebar-link" href="/admin/pending-registrations"><i class="fas fa-user-clock"></i> Pending Registrations</a></li>
+                <li><a class="sidebar-link" href="/admin/exam-registrations"><i class="fas fa-clipboard-check"></i> Exam Registrations</a></li>
                 <li><a class="sidebar-link" href="/admin/students"><i class="fas fa-users"></i> Students</a></li>
+                <li><a class="sidebar-link" href="/admin/subjects"><i class="fas fa-book"></i> Subjects</a></li>
+                <li><a class="sidebar-link" href="/admin/attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                <li><a class="sidebar-link" href="/admin/marks"><i class="fas fa-chart-line"></i> Marks</a></li>
                 <li><a class="sidebar-link" href="/admin/change-password"><i class="fas fa-lock"></i> Change Password</a></li>
                 <li><hr class="sidebar-divider my-3"></li>
                 <li>
@@ -27,6 +32,7 @@
         <main class="dashboard-content">
             <header class="dashboard-header">
                 <h1><i class="fas fa-chart-line"></i> Admin Dashboard</h1>
+                <p class="welcome-note">Welcome to Dr Sudhakarrao Jadhavar Institute of Management and Technology</p>
             </header>
 
             <div class="dashboard-cards">
@@ -46,9 +52,16 @@
                 </div>
                 <div class="card stat-card">
                     <div class="card-body">
-                        <div class="stat-icon bg-purple"><i class="fas fa-calendar-alt"></i></div>
-                        <h5 class="card-title">Weekly Logins</h5>
-                        <p class="stat-value">12</p>
+                        <div class="stat-icon bg-orange"><i class="fas fa-clipboard-check"></i></div>
+                        <h5 class="card-title">Exam Registrations</h5>
+                        <p class="stat-value" th:text="${#lists.size(examRegistrations)}">0</p>
+                    </div>
+                </div>
+                <div class="card stat-card">
+                    <div class="card-body">
+                        <div class="stat-icon bg-yellow"><i class="fas fa-clock"></i></div>
+                        <h5 class="card-title">Pending Approvals</h5>
+                        <p class="stat-value" th:text="${pendingApprovals}">0</p>
                     </div>
                 </div>
             </div>

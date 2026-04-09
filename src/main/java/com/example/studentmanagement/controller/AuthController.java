@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Optional;
+
 import jakarta.annotation.PostConstruct;
 
 @Controller
@@ -27,6 +29,28 @@ public class AuthController {
     @PostConstruct
     public void init() {
         userService.createAdminIfNotExists();
+    }
+
+    @GetMapping("/")
+    public String home() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+            String username = auth.getName();
+            Optional<User> userOpt = userService.findByUsername(username);
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                if ("pending".equals(user.getStatus())) {
+                    return "redirect:/pending";
+                }
+                String role = auth.getAuthorities().iterator().next().getAuthority();
+                if ("ROLE_ADMIN".equals(role)) {
+                    return "redirect:/admin/dashboard";
+                } else {
+                    return "redirect:/student/dashboard";
+                }
+            }
+        }
+        return "redirect:/login";
     }
 
     @GetMapping("/login")
@@ -44,7 +68,6 @@ public class AuthController {
                                @RequestParam String password,
                                @RequestParam String email,
                                @RequestParam String fullName,
-                               @RequestParam String studentId,
                                @RequestParam String course,
                                @RequestParam String department,
                                @RequestParam int year,
@@ -56,20 +79,35 @@ public class AuthController {
             return "register";
         }
         User user = new User(username, password, "STUDENT", email, fullName);
+        user.setStatus("pending");
         user = userService.saveUser(user);
-        Student student = new Student(user.getId(), studentId, course, department, year, phone, address);
+        Student student = new Student(user.getId(), null, course, department, year, phone, address);
         studentService.saveStudent(student);
-        return "redirect:/login?registered";
+        return "redirect:/login?pending";
     }
 
     @GetMapping("/dashboard")
     public String dashboard() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String role = auth.getAuthorities().iterator().next().getAuthority();
-        if ("ROLE_ADMIN".equals(role)) {
-            return "redirect:/admin/dashboard";
-        } else {
-            return "redirect:/student/dashboard";
+        String username = auth.getName();
+        Optional<User> userOpt = userService.findByUsername(username);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            if ("pending".equals(user.getStatus())) {
+                return "redirect:/pending";
+            }
+            String role = auth.getAuthorities().iterator().next().getAuthority();
+            if ("ROLE_ADMIN".equals(role)) {
+                return "redirect:/admin/dashboard";
+            } else {
+                return "redirect:/student/dashboard";
+            }
         }
+        return "redirect:/login?error";
+    }
+
+    @GetMapping("/pending")
+    public String pending() {
+        return "pending";
     }
 }

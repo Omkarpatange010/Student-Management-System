@@ -11,6 +11,7 @@ public class User {
     private String username;
     private String password;
     private String role; // ADMIN or STUDENT
+    private String status; // approved or pending
     private String email;
     private String fullName;
 
@@ -20,6 +21,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.status = "approved"; // default
         this.email = email;
         this.fullName = fullName;
     }
@@ -72,5 +74,13 @@ public class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
