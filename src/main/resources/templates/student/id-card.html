@@ -6,39 +6,44 @@
     <link href="/css/style.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0f3460;
+            --accent-color: #00d4ff;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            color: #ecf0f1;
+        }
+
+        .id-card-container-bg {
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
         .id-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            border: 2px solid #e2e8f0;
-            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 212, 255, 0.2);
+            border: 3px solid var(--accent-color);
+            max-width: 500px;
             margin: 0 auto;
             overflow: hidden;
             position: relative;
         }
 
         .id-card-header {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            color: white;
-            padding: 15px;
+            background: linear-gradient(135deg, var(--accent-color), #00a8cc);
+            color: #1a1a2e;
+            padding: 20px;
             text-align: center;
             position: relative;
         }
 
-        .id-card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
-        }
-
         .id-card-header h3 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: 700;
             position: relative;
             z-index: 1;
@@ -46,16 +51,17 @@
 
         .id-card-header p {
             margin: 5px 0 0 0;
-            font-size: 0.9rem;
-            opacity: 0.9;
+            font-size: 0.95rem;
+            font-weight: 600;
             position: relative;
             z-index: 1;
         }
 
         .id-card-body {
-            padding: 20px;
+            padding: 25px;
             display: flex;
-            gap: 15px;
+            gap: 20px;
+            align-items: flex-start;
         }
 
         .photo-section {
@@ -63,13 +69,28 @@
         }
 
         .passport-photo {
-            width: 100px;
-            height: 120px;
+            width: 120px;
+            height: 140px;
             border-radius: 10px;
-            border: 3px solid #e2e8f0;
+            border: 4px solid var(--accent-color);
             object-fit: cover;
-            background: #f1f5f9;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 168, 204, 0.2) 100%);
             display: block;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .photo-placeholder {
+            width: 120px;
+            height: 140px;
+            border-radius: 10px;
+            border: 4px solid var(--accent-color);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 168, 204, 0.2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
         }
 
         .info-section {
@@ -77,62 +98,175 @@
         }
 
         .info-item {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 8px;
         }
 
         .info-label {
             font-weight: 600;
-            color: #374151;
+            color: var(--accent-color);
             font-size: 0.85rem;
-            min-width: 70px;
+            min-width: 65px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .info-value {
-            color: #1f2937;
-            font-size: 0.9rem;
+            color: #ecf0f1;
+            font-size: 0.95rem;
             flex: 1;
+            word-break: break-word;
         }
 
         .id-card-footer {
-            background: #f8fafc;
-            padding: 10px 20px;
-            border-top: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 168, 204, 0.1) 100%);
+            border-top: 2px solid var(--accent-color);
+            padding: 15px 25px;
             text-align: center;
         }
 
         .student-id-display {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-color), #00a8cc);
+            color: #1a1a2e;
+            padding: 10px 20px;
+            border-radius: 25px;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             display: inline-block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .validity {
-            font-size: 0.8rem;
-            color: #6b7280;
+            font-size: 0.85rem;
+            color: #95a5a6;
+            font-weight: 500;
         }
 
-        .print-btn {
-            background: linear-gradient(135deg, #10b981, #059669);
-            border: none;
-            color: white;
-            padding: 12px 30px;
-            border-radius: 25px;
-            font-weight: 600;
-            margin-top: 20px;
+        .page-title {
+            color: var(--accent-color);
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            color: #bdc3c7;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .nav-custom {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            border-bottom: 3px solid var(--accent-color);
+        }
+
+        .navbar-brand {
+            color: var(--accent-color) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #ecf0f1 !important;
             transition: all 0.3s ease;
         }
 
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent-color) !important;
+        }
+
+        .print-btn {
+            background: linear-gradient(135deg, var(--accent-color), #00a8cc);
+            border: none;
+            color: #1a1a2e;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
         .print-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+            color: #1a1a2e;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .id-card {
+                max-width: 100%;
+            }
+
+            .id-card-body {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .photo-section {
+                text-align: center;
+            }
+
+            .info-section {
+                width: 100%;
+            }
+
+            .passport-photo,
+            .photo-placeholder {
+                width: 100px;
+                height: 120px;
+            }
+
+            .page-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .id-card {
+                border-radius: 15px;
+            }
+
+            .id-card-body {
+                padding: 15px;
+            }
+
+            .passport-photo,
+            .photo-placeholder {
+                width: 90px;
+                height: 110px;
+                font-size: 1.8rem;
+            }
+
+            .info-item {
+                margin-bottom: 8px;
+                font-size: 0.9rem;
+            }
+
+            .info-label {
+                min-width: 60px;
+                font-size: 0.8rem;
+            }
+
+            .info-value {
+                font-size: 0.85rem;
+            }
+
+            .page-title {
+                font-size: 1.4rem;
+            }
+
+            .print-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
 
         @media print {
@@ -148,55 +282,109 @@
                 top: 0;
                 box-shadow: none;
                 border: 1px solid #000;
+                max-width: none;
             }
             .print-btn {
                 display: none;
             }
+            .page-title,
+            .page-subtitle,
+            .navbar,
+            body > * {
+                display: none !important;
+            }
         }
     </style>
 </head>
-<body class="dashboard-body">
-    <nav class="navbar navbar-expand-lg navbar-dark nav-custom">
-        <div class="container">
+<body class="student-dashboard-body">
+    <nav class="navbar navbar-expand-lg navbar-dark nav-custom sticky-top">
+        <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="fas fa-graduation-cap"></i> SMS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link" href="/student/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    <a class="nav-link" href="/student/profile"><i class="fas fa-user-circle"></i> Profile</a>
-                    <a class="nav-link" href="/student/attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
-                    <a class="nav-link" href="/student/marks"><i class="fas fa-chart-line"></i> Marks</a>
-                    <a class="nav-link" href="/student/subjects"><i class="fas fa-book"></i> Subjects</a>
-                    <a class="nav-link active" href="/student/id-card"><i class="fas fa-id-card"></i> ID Card</a>
+                    <a class="nav-link" href="/student/dashboard"><i class="fas fa-tachometer-alt"></i> <span class="d-lg-inline d-none">Dashboard</span></a>
+                    <a class="nav-link" href="/student/profile"><i class="fas fa-user-circle"></i> <span class="d-lg-inline d-none">Profile</span></a>
+                    <a class="nav-link" href="/student/attendance"><i class="fas fa-calendar-check"></i> <span class="d-lg-inline d-none">Attendance</span></a>
+                    <a class="nav-link" href="/student/marks"><i class="fas fa-chart-line"></i> <span class="d-lg-inline d-none">Marks</span></a>
+                    <a class="nav-link" href="/student/subjects"><i class="fas fa-book"></i> <span class="d-lg-inline d-none">Subjects</span></a>
+                    <a class="nav-link active" href="/student/id-card"><i class="fas fa-id-card"></i> <span class="d-lg-inline d-none">ID Card</span></a>
                     <form th:action="@{/logout}" method="post" class="d-inline">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <button type="submit" class="btn btn-link nav-link text-decoration-none"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        <button type="submit" class="nav-link border-0 bg-transparent"><i class="fas fa-sign-out-alt"></i> <span class="d-lg-inline d-none">Logout</span></button>
                     </form>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-5 mb-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-6">
-                <div class="text-center mb-4">
-                    <h2><i class="fas fa-id-card text-info"></i> Student Identity Card</h2>
-                    <p class="text-muted">Dr. Sudhakarrao Jadhavar Institute of Management and Technology</p>
-                </div>
+    <div class="id-card-container-bg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    <h2 class="page-title"><i class="fas fa-id-card"></i> Student Identity Card</h2>
+                    <p class="page-subtitle">Dr. Sudhakarrao Jadhavar Institute of Management and Technology</p>
 
-                <div class="id-card">
-                    <div class="id-card-header">
-                        <h3><i class="fas fa-university"></i> DSJIMT</h3>
-                        <p>Student Identity Card</p>
+                    <div class="id-card">
+                        <div class="id-card-header">
+                            <h3><i class="fas fa-university"></i> DSJIMT</h3>
+                            <p>Student Identity Card</p>
+                        </div>
+
+                        <div class="id-card-body">
+                            <div class="photo-section">
+                                <div th:if="${student.profilePhoto}">
+                                    <img th:src="${student.profilePhoto}" alt="Profile Photo" class="passport-photo">
+                                </div>
+                                <div th:unless="${student.profilePhoto}" class="photo-placeholder">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="info-section">
+                                <div class="info-item">
+                                    <span class="info-label">Name:</span>
+                                    <span class="info-value" th:text="${user.fullName}"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">ID:</span>
+                                    <span class="info-value" th:text="${student.studentId}"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Email:</span>
+                                    <span class="info-value" th:text="${user.email}"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Phone:</span>
+                                    <span class="info-value" th:text="${student.phone}"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Course:</span>
+                                    <span class="info-value" th:text="${student.course}"></span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Dept:</span>
+                                    <span class="info-value" th:text="${student.department}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="id-card-footer">
+                            <div class="student-id-display" th:text="'ID: ' + ${student.studentId}"></div>
+                            <div class="validity">Valid for Academic Year 2024-2025</div>
+                        </div>
                     </div>
 
-                    <div class="id-card-body">
-                        <div class="photo-section">
-                            <img src="/img/logo1.webp" alt="ID Profile Photo" class="passport-photo" />
-                        </div>
+                    <div class="text-center">
+                        <button onclick="window.print()" class="btn print-btn">
+                            <i class="fas fa-print"></i> Print ID Card
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
                         <div class="info-section">
                             <div class="info-item">
@@ -204,11 +392,7 @@
                                 <span class="info-value" th:text="${user.fullName}"></span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">User ID:</span>
-                                <span class="info-value" th:text="${user.username}"></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Student ID:</span>
+                                <span class="info-label">ID:</span>
                                 <span class="info-value" th:text="${student.studentId}"></span>
                             </div>
                             <div class="info-item">
@@ -220,8 +404,12 @@
                                 <span class="info-value" th:text="${student.phone}"></span>
                             </div>
                             <div class="info-item">
-                                <span class="info-label">Address:</span>
-                                <span class="info-value" th:text="${student.address}" style="font-size: 0.8rem;"></span>
+                                <span class="info-label">Course:</span>
+                                <span class="info-value" th:text="${student.course}"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Dept:</span>
+                                <span class="info-value" th:text="${student.department}"></span>
                             </div>
                         </div>
                     </div>

@@ -1,111 +1,522 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard - Student Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/style.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --dark-bg: #1a1a2e;
+            --darker-bg: #0f3460;
+            --accent-color: #00d4ff;
+            --success-color: #2ecc71;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+            color: #ecf0f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        .student-dashboard-body {
+            background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%);
+            color: #ecf0f1;
+        }
+
+        .nav-custom {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            border-bottom: 3px solid var(--accent-color);
+            padding: 1rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--accent-color) !important;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            color: #ecf0f1 !important;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+            border-radius: 5px;
+            padding: 0.5rem 1rem !important;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+            background-color: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            color: var(--accent-color) !important;
+            background-color: rgba(0, 212, 255, 0.2);
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.8) 0%, rgba(26, 26, 46, 0.8) 100%);
+            border: 2px solid var(--accent-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .profile-card:hover {
+            box-shadow: 0 12px 48px rgba(0, 212, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .profile-photo-section {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            object-fit: cover;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(46, 204, 113, 0.2) 100%);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .profile-photo-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 4px solid var(--accent-color);
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(46, 204, 113, 0.2) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .upload-photo-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: var(--accent-color);
+            color: #000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+        }
+
+        .upload-photo-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .upload-photo-btn input {
+            display: none;
+        }
+
+        .profile-info-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .student-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .student-id {
+            font-size: 1rem;
+            color: #bdc3c7;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .student-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .info-item {
+            background: rgba(0, 212, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-color);
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .info-label {
+            color: #95a5a6;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #ecf0f1;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            background: rgba(0, 212, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--accent-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #95a5a6;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            color: #ecf0f1;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #00a8cc 100%);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(135deg, #00a8cc 0%, var(--accent-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.3);
+            color: #000;
+            text-decoration: none;
+        }
+
+        .btn-custom-outline {
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-custom-outline:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.2);
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons a,
+        .action-buttons button {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .section-title {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .profile-photo,
+            .profile-photo-placeholder {
+                width: 120px;
+                height: 120px;
+                font-size: 2rem;
+            }
+
+            .student-name {
+                font-size: 1.4rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons a,
+            .action-buttons button {
+                width: 100%;
+            }
+
+            .nav-link {
+                margin: 0.25rem 0;
+            }
+
+            .profile-card {
+                padding: 1.5rem;
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-photo,
+            .profile-photo-placeholder {
+                width: 100px;
+                height: 100px;
+                font-size: 1.8rem;
+            }
+
+            .student-name {
+                font-size: 1.2rem;
+            }
+
+            .info-grid {
+                gap: 1rem;
+            }
+
+            .info-item {
+                padding: 1rem;
+            }
+
+            .profile-card {
+                padding: 1rem;
+            }
+
+            .quick-stats {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .upload-photo-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
 </head>
-<body class="dashboard-body">
-    <nav class="navbar navbar-expand-lg navbar-dark nav-custom">
-        <div class="container">
+<body class="student-dashboard-body">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark nav-custom sticky-top">
+        <div class="container-fluid">
             <a class="navbar-brand" href="#"><i class="fas fa-graduation-cap"></i> SMS</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <div class="navbar-nav ms-auto">
-                    <a class="nav-link active" href="/student/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                    <a class="nav-link" href="/student/profile"><i class="fas fa-user-circle"></i> Profile</a>
-                    <a class="nav-link" href="/student/exam-status"><i class="fas fa-clipboard-check"></i> Exam Status</a>
-                    <a class="nav-link" href="/student/attendance"><i class="fas fa-calendar-check"></i> Attendance</a>
-                    <a class="nav-link" href="/student/marks"><i class="fas fa-chart-line"></i> Marks</a>
-                    <a class="nav-link" href="/student/subjects"><i class="fas fa-book"></i> Subjects</a>
-                    <a class="nav-link" href="/student/id-card"><i class="fas fa-id-card"></i> ID Card</a>
+                    <a class="nav-link active" href="/student/dashboard"><i class="fas fa-tachometer-alt"></i> <span class="d-lg-inline d-none">Dashboard</span></a>
+                    <a class="nav-link" href="/student/profile"><i class="fas fa-user-circle"></i> <span class="d-lg-inline d-none">Profile</span></a>
+                    <a class="nav-link" href="/student/exam-status"><i class="fas fa-clipboard-check"></i> <span class="d-lg-inline d-none">Exams</span></a>
+                    <a class="nav-link" href="/student/attendance"><i class="fas fa-calendar-check"></i> <span class="d-lg-inline d-none">Attendance</span></a>
+                    <a class="nav-link" href="/student/marks"><i class="fas fa-chart-line"></i> <span class="d-lg-inline d-none">Marks</span></a>
+                    <a class="nav-link" href="/student/subjects"><i class="fas fa-book"></i> <span class="d-lg-inline d-none">Subjects</span></a>
+                    <a class="nav-link" href="/student/id-card"><i class="fas fa-id-card"></i> <span class="d-lg-inline d-none">ID Card</span></a>
                     <form th:action="@{/logout}" method="post" class="d-inline">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <button type="submit" class="btn btn-link nav-link text-decoration-none"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        <button type="submit" class="nav-link border-0 bg-transparent"><i class="fas fa-sign-out-alt"></i> <span class="d-lg-inline d-none">Logout</span></button>
                     </form>
                 </div>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-5 mb-5">
+    <!-- Main Content -->
+    <div class="container-fluid py-5">
         <div class="row">
-            <div class="col-lg-8">
-                <div class="page-card shadow-lg">
-                    <div class="page-card-header">
-                        <h2><i class="fas fa-user-graduate"></i> Welcome Back</h2>
-                        <p class="subtitle">Dr Sudhakarrao Jadhavar Institute of Management and Technology</p>
-                        <p class="subtitle">Here's your student information and dashboard overview.</p>
-                    </div>
-                    <div class="page-card-body">
-                        <div class="row g-4">
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-id-badge text-info"></i> Name:</strong></p>
-                                <p class="ms-4" th:text="${user.fullName}"></p>
+            <!-- Profile Section -->
+            <div class="col-12">
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <!-- Photo Section -->
+                        <div class="profile-photo-section">
+                            <div th:if="${student.profilePhoto}">
+                                <img th:src="${student.profilePhoto}" alt="Profile Photo" class="profile-photo">
                             </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-barcode text-info"></i> Student ID:</strong></p>
-                                <p class="ms-4" th:text="${student.studentId}"></p>
+                            <div th:unless="${student.profilePhoto}" class="profile-photo-placeholder">
+                                <i class="fas fa-user"></i>
                             </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-book text-info"></i> Course:</strong></p>
-                                <p class="ms-4" th:text="${student.course}"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-building text-info"></i> Department:</strong></p>
-                                <p class="ms-4" th:text="${student.department}"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-calendar-alt text-info"></i> Year:</strong></p>
-                                <p class="ms-4" th:text="${student.year}"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-envelope text-info"></i> Email:</strong></p>
-                                <p class="ms-4" th:text="${user.email}"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-phone text-info"></i> Phone:</strong></p>
-                                <p class="ms-4" th:text="${student.phone}"></p>
-                            </div>
-                            <div class="col-md-6">
-                                <p><strong><i class="fas fa-map-marker-alt text-info"></i> Address:</strong></p>
-                                <p class="ms-4" th:text="${student.address}"></p>
-                            </div>
+                            <button class="upload-photo-btn" title="Upload Profile Photo" onclick="document.getElementById('photoInput').click()">
+                                <i class="fas fa-camera"></i>
+                                <form id="photoForm" th:action="@{/student/upload-photo}" method="post" enctype="multipart/form-data" style="display: none;">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <input type="file" id="photoInput" name="profilePhoto" accept="image/*" onchange="document.getElementById('photoForm').submit();">
+                                </form>
+                            </button>
                         </div>
-                        <div class="mt-4">
-                            <a href="/student/profile" class="btn btn-primary btn-lg"><i class="fas fa-edit"></i> Update Profile</a>
+
+                        <!-- Student Info Section -->
+                        <div class="profile-info-section">
+                            <div class="student-name" th:text="${user.fullName}"></div>
+                            <div class="student-id"><strong>Student ID:</strong> <span th:text="${student.studentId}"></span></div>
+                            <div class="student-status-badge">
+                                <i class="fas fa-check-circle"></i> Active Student
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="page-card shadow-lg h-100">
-                    <div class="page-card-header">
-                        <h3><i class="fas fa-chart-bar"></i> Quick Stats</h3>
+
+                    <!-- Quick Stats -->
+                    <div class="quick-stats">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-book"></i></div>
+                            <div class="stat-label">Course</div>
+                            <div class="stat-value" th:text="${student.course}"></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-building"></i></div>
+                            <div class="stat-label">Department</div>
+                            <div class="stat-value" th:text="${student.department}"></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="stat-label">Year</div>
+                            <div class="stat-value" th:text="${student.year}"></div>
+                        </div>
                     </div>
-                    <div class="page-card-body">
-                        <div class="mb-4">
-                            <p class="text-muted mb-1">Account Status</p>
-                            <span class="badge bg-success fs-6"><i class="fas fa-check-circle"></i> Active</span>
+
+                    <!-- Detailed Info Grid -->
+                    <div class="info-grid" style="margin-top: 2rem;">
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-envelope"></i> Email</div>
+                            <div class="info-value" th:text="${user.email}"></div>
                         </div>
-                        <div class="mb-4">
-                            <p class="text-muted mb-1">Last Login</p>
-                            <p>Today</p>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-phone"></i> Phone</div>
+                            <div class="info-value" th:text="${student.phone}"></div>
                         </div>
-                        <div class="mb-4">
-                            <p class="text-muted mb-1">Member Since</p>
-                            <p>2024</p>
+                        <div class="info-item">
+                            <div class="info-label"><i class="fas fa-map-marker-alt"></i> Address</div>
+                            <div class="info-value" th:text="${student.address}"></div>
                         </div>
-                        <hr />
-                        <a href="/student/profile" class="btn btn-outline-primary w-100 btn-sm"><i class="fas fa-cogs"></i> Account Settings</a>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <a href="/student/profile" class="btn btn-custom"><i class="fas fa-edit"></i> Update Profile</a>
+                        <a href="/student/id-card" class="btn btn-custom-outline"><i class="fas fa-id-card"></i> View ID Card</a>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Welcome Message -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="profile-card text-center">
+                    <h3 class="section-title" style="justify-content: center;">
+                        <i class="fas fa-info-circle"></i> Welcome to Your Dashboard
+                    </h3>
+                    <p style="color: #bdc3c7; font-size: 1.1rem;">
+                        Dr. Sudhakarrao Jadhavar Institute of Management and Technology
+                    </p>
+                    <p style="color: #95a5a6;">
+                        Manage your academic profile, track your progress, and stay updated with important information.
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

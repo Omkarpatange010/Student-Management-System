@@ -52,6 +52,112 @@
             justify-content: space-between;
             margin-bottom: 10px;
             padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .detail-value {
+            color: #6c757d;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 30px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .pending-container {
+                padding: 1rem;
+            }
+
+            .pending-card {
+                max-width: 100%;
+            }
+
+            .pending-header {
+                padding: 2rem 1.5rem;
+            }
+
+            .pending-icon {
+                font-size: 3rem;
+            }
+
+            .pending-body {
+                padding: 2rem 1.5rem;
+            }
+
+            .registration-details {
+                padding: 1.5rem;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .btn-back {
+                width: 100%;
+                text-align: center;
+                padding: 1rem 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pending-container {
+                padding: 0.5rem;
+            }
+
+            .pending-header {
+                padding: 1.5rem 1rem;
+            }
+
+            .pending-icon {
+                font-size: 2.5rem;
+            }
+
+            .pending-body {
+                padding: 1.5rem 1rem;
+            }
+
+            .registration-details {
+                padding: 1rem;
+            }
+
+            .btn-back {
+                padding: 0.9rem 1.5rem;
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #e9ecef;
         }
 

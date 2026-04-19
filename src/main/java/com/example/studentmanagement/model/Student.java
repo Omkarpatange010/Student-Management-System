@@ -15,6 +15,7 @@ public class Student {
     private int year;
     private String phone;
     private String address;
+    private String profilePhoto; // Base64 encoded profile photo
 
     public Student() {}
 
@@ -92,5 +93,13 @@ public class Student {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getProfilePhoto() {
+        return profilePhoto;
+    }
+
+    public void setProfilePhoto(String profilePhoto) {
+        this.profilePhoto = profilePhoto;
     }
 }

@@ -398,6 +398,17 @@ public class AdminController {
         return "admin/marks";
     }
 
+    @PostMapping("/add-marks")
+    public String addMarks(@RequestParam String studentId,
+                           @RequestParam String subjectId,
+                           @RequestParam int externalMarks,
+                           @RequestParam int internalMarks,
+                           @RequestParam String semester) {
+        Marks marks = new Marks(studentId, subjectId, externalMarks, internalMarks, semester);
+        marksService.saveMarks(marks);
+        return "redirect:/admin/marks";
+    }
+
     @GetMapping("/pending-registrations")
     public String pendingRegistrations(Model model) {
         List<User> pendingUsers = userService.findAllUsers().stream()

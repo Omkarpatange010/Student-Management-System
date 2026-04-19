@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Base64;
+import java.io.IOException;
 
 import java.util.Optional;
 import java.util.List;
@@ -340,5 +343,29 @@ public class StudentController {
         }
         
         return "redirect:/student/profile";
+    }
+
+    @PostMapping("/upload-photo")
+    public String uploadPhoto(@RequestParam("profilePhoto") MultipartFile file) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Optional<User> userOpt = userService.findByUsername(username);
+        
+        if (userOpt.isPresent() && !file.isEmpty()) {
+            try {
+                // Convert file to Base64
+                String base64Photo = Base64.getEncoder().encodeToString(file.getBytes());
+                
+                Optional<Student> studentOpt = studentService.findByUserId(userOpt.get().getId());
+                if (studentOpt.isPresent()) {
+                    Student student = studentOpt.get();
+                    student.setProfilePhoto("data:" + file.getContentType() + ";base64," + base64Photo);
+                    studentService.updateStudent(student);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return "redirect:/student/dashboard";
     }
 }
