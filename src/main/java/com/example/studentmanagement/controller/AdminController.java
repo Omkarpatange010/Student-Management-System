@@ -12,6 +12,7 @@ import com.example.studentmanagement.service.SubjectService;
 import com.example.studentmanagement.service.AttendanceService;
 import com.example.studentmanagement.service.MarksService;
 import com.example.studentmanagement.service.ExamRegistrationService;
+import com.example.studentmanagement.service.ExamSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +50,9 @@ public class AdminController {
     private ExamRegistrationService examRegistrationService;
 
     @Autowired
+    private ExamSettingsService examSettingsService;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/dashboard")
@@ -61,12 +65,42 @@ public class AdminController {
         long pendingCount = examRegistrations.stream()
             .filter(reg -> reg != null && "PENDING".equals(reg.getStatus()))
             .count();
+        
+        // Count pending faculty registrations
+        List<User> allUsers = userService.findAllUsers();
+        long pendingFacultyCount = allUsers.stream()
+            .filter(user -> "FACULTY".equals(user.getRole()) && "pending".equals(user.getStatus()))
+            .count();
+        
+        Map<String, List<Integer>> courseScores = new HashMap<>();
+        for (Marks mark : marks) {
+            if (mark == null || mark.getSubjectId() == null) {
+                continue;
+            }
+            subjectService.findById(mark.getSubjectId()).ifPresent(subject -> {
+                String courseTitle = subject.getCourseTitle();
+                courseScores.computeIfAbsent(courseTitle, k -> new ArrayList<>())
+                        .add(mark.getExternalMarks() + mark.getInternalMarks());
+            });
+        }
+        List<String> courseLabels = new ArrayList<>(courseScores.keySet());
+        List<Double> courseValues = new ArrayList<>();
+        for (String course : courseLabels) {
+            List<Integer> values = courseScores.get(course);
+            double average = values.stream().mapToInt(Integer::intValue).average().orElse(0d);
+            courseValues.add(average);
+        }
+
         model.addAttribute("students", students);
         model.addAttribute("subjects", subjects);
         model.addAttribute("attendances", attendances);
         model.addAttribute("marks", marks);
         model.addAttribute("examRegistrations", examRegistrations);
         model.addAttribute("pendingApprovals", pendingCount);
+        model.addAttribute("pendingFacultyCount", pendingFacultyCount);
+        model.addAttribute("courseLabels", courseLabels);
+        model.addAttribute("courseValues", courseValues);
+        model.addAttribute("examRegistrationEnabled", examSettingsService.isExamRegistrationEnabled());
         return "admin/dashboard";
     }
 
@@ -412,15 +446,17 @@ public class AdminController {
     @GetMapping("/pending-registrations")
     public String pendingRegistrations(Model model) {
         List<User> pendingUsers = userService.findAllUsers().stream()
-                .filter(user -> "pending".equals(user.getStatus()) && "STUDENT".equals(user.getRole()))
+                .filter(user -> "pending".equals(user.getStatus()))
                 .collect(java.util.stream.Collectors.toList());
         List<Map<String, Object>> pendingData = new ArrayList<>();
         for (User user : pendingUsers) {
             Map<String, Object> item = new HashMap<>();
             item.put("user", user);
-            Optional<Student> studentOpt = studentService.findByUserId(user.getId());
-            if (studentOpt.isPresent()) {
-                item.put("student", studentOpt.get());
+            if ("STUDENT".equals(user.getRole())) {
+                Optional<Student> studentOpt = studentService.findByUserId(user.getId());
+                if (studentOpt.isPresent()) {
+                    item.put("student", studentOpt.get());
+                }
             }
             pendingData.add(item);
         }
@@ -434,15 +470,19 @@ public class AdminController {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             user.setStatus("approved");
-            // Generate student ID
-            String studentId = generateStudentId();
             userService.updateUser(user);
-            Optional<Student> studentOpt = studentService.findByUserId(userId);
-            if (studentOpt.isPresent()) {
-                Student student = studentOpt.get();
-                student.setStudentId(studentId);
-                studentService.updateStudent(student);
+
+            if ("STUDENT".equals(user.getRole())) {
+                // Generate student ID for students
+                String studentId = generateStudentId();
+                Optional<Student> studentOpt = studentService.findByUserId(userId);
+                if (studentOpt.isPresent()) {
+                    Student student = studentOpt.get();
+                    student.setStudentId(studentId);
+                    studentService.updateStudent(student);
+                }
             }
+            // Faculty approval doesn't need additional processing
         }
         return "redirect:/admin/pending-registrations";
     }
@@ -522,5 +562,136 @@ public class AdminController {
             examRegistrationService.updateExamRegistration(registration);
         }
         return "redirect:/admin/exam-registrations";
+    }
+
+    // Faculty Management
+    @GetMapping("/faculty")
+    public String faculty(Model model) {
+        List<User> facultyUsers = userService.findAllUsers().stream()
+                .filter(user -> "FACULTY".equals(user.getRole()))
+                .collect(java.util.stream.Collectors.toList());
+        model.addAttribute("faculty", facultyUsers);
+        return "admin/faculty";
+    }
+
+    @GetMapping("/add-faculty")
+    public String addFaculty() {
+        return "admin/add-faculty";
+    }
+
+    @PostMapping("/add-faculty")
+    public String addFaculty(@RequestParam String username,
+                             @RequestParam String password,
+                             @RequestParam String email,
+                             @RequestParam String fullName,
+                             @RequestParam String department,
+                             @RequestParam String phone,
+                             Model model) {
+        try {
+            if (userService.findByUsername(username).isPresent()) {
+                model.addAttribute("error", "Username already exists");
+                return "admin/add-faculty";
+            }
+            User user = new User(username, passwordEncoder.encode(password), "FACULTY", email, fullName);
+            user.setDepartment(department);
+            user.setPhone(phone);
+            user.setStatus("approved");
+            userService.saveUser(user);
+            return "redirect:/admin/faculty?added";
+        } catch (Exception ex) {
+            model.addAttribute("error", "Unable to add faculty: " + ex.getMessage());
+            return "admin/add-faculty";
+        }
+    }
+
+    @GetMapping("/edit-faculty/{id}")
+    public String editFaculty(@PathVariable String id, Model model) {
+        Optional<User> userOpt = userService.findById(id);
+        if (userOpt.isPresent() && "FACULTY".equals(userOpt.get().getRole())) {
+            model.addAttribute("faculty", userOpt.get());
+            return "admin/edit-faculty";
+        }
+        return "redirect:/admin/faculty";
+    }
+
+    @PostMapping("/edit-faculty/{id}")
+    public String editFaculty(@PathVariable String id,
+                              @RequestParam String username,
+                              @RequestParam String email,
+                              @RequestParam String fullName,
+                              @RequestParam String department,
+                              @RequestParam String phone) {
+        Optional<User> userOpt = userService.findById(id);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setFullName(fullName);
+            user.setDepartment(department);
+            user.setPhone(phone);
+            userService.updateUser(user);
+        }
+        return "redirect:/admin/faculty";
+    }
+
+    @GetMapping("/delete-faculty/{id}")
+    public String deleteFaculty(@PathVariable String id) {
+        Optional<User> userOpt = userService.findById(id);
+        if (userOpt.isPresent() && "FACULTY".equals(userOpt.get().getRole())) {
+            userService.deleteUser(id);
+        }
+        return "redirect:/admin/faculty";
+    }
+
+    // Exam Registration Toggle
+    @PostMapping("/toggle-exam-registration")
+    public String toggleExamRegistration(@RequestParam boolean enabled) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Optional<User> userOpt = userService.findByUsername(username);
+        if (userOpt.isPresent()) {
+            examSettingsService.setExamRegistrationEnabled(enabled, userOpt.get().getId());
+        }
+        return "redirect:/admin/dashboard";
+    }
+
+    // Pending Faculty Registrations
+    @GetMapping("/pending-faculty")
+    public String pendingFacultyRegistrations(Model model) {
+        List<User> pendingFaculty = new ArrayList<>();
+        // Get all faculty with "pending" status
+        List<User> allUsers = userService.findAllUsers();
+        for (User user : allUsers) {
+            if ("FACULTY".equals(user.getRole()) && "pending".equals(user.getStatus())) {
+                pendingFaculty.add(user);
+            }
+        }
+        model.addAttribute("pendingFaculty", pendingFaculty);
+        return "admin/pending-faculty-registrations";
+    }
+
+    @PostMapping("/approve-faculty")
+    public String approveFaculty(@RequestParam String facultyId) {
+        Optional<User> userOpt = userService.findById(facultyId);
+        if (userOpt.isPresent()) {
+            User faculty = userOpt.get();
+            if ("FACULTY".equals(faculty.getRole()) && "pending".equals(faculty.getStatus())) {
+                faculty.setStatus("approved");
+                userService.saveUser(faculty);
+            }
+        }
+        return "redirect:/admin/pending-faculty";
+    }
+
+    @PostMapping("/reject-faculty")
+    public String rejectFaculty(@RequestParam String facultyId) {
+        Optional<User> userOpt = userService.findById(facultyId);
+        if (userOpt.isPresent()) {
+            User faculty = userOpt.get();
+            if ("FACULTY".equals(faculty.getRole())) {
+                userService.deleteUser(facultyId);
+            }
+        }
+        return "redirect:/admin/pending-faculty";
     }
 }

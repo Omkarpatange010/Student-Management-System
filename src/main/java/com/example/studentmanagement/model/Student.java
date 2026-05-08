@@ -1,6 +1,7 @@
 package com.example.studentmanagement.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "students")
@@ -9,6 +10,8 @@ public class Student {
     @Id
     private String id;
     private String userId; // reference to User
+    @DBRef
+    private User user;
     private String studentId;
     private String course;
     private String department;
@@ -101,5 +104,13 @@ public class Student {
 
     public void setProfilePhoto(String profilePhoto) {
         this.profilePhoto = profilePhoto;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

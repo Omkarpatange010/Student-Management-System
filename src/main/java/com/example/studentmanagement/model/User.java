@@ -10,10 +10,14 @@ public class User {
     private String id;
     private String username;
     private String password;
-    private String role; // ADMIN or STUDENT
+    private String role; // ADMIN, FACULTY, or STUDENT
     private String status; // approved or pending
     private String email;
     private String fullName;
+    private String phone;
+    private String department;
+    private String passportImage; // URL or path to passport image for ID card
+    private String notificationPreference;
 
     public User() {}
 
@@ -74,6 +78,38 @@ public class User {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getPassportImage() {
+        return passportImage;
+    }
+
+    public void setPassportImage(String passportImage) {
+        this.passportImage = passportImage;
+    }
+
+    public String getNotificationPreference() {
+        return notificationPreference;
+    }
+
+    public void setNotificationPreference(String notificationPreference) {
+        this.notificationPreference = notificationPreference;
     }
 
     public String getStatus() {

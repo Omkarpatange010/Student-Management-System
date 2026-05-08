@@ -1,6 +1,7 @@
 package com.example.studentmanagement.model;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "marks")
@@ -10,6 +11,8 @@ public class Marks {
     private String id;
     private String studentId; // reference to Student id
     private String subjectId; // reference to Subject id
+    @DBRef
+    private Student student;
     private int externalMarks;
     private int internalMarks;
     private String semester;
@@ -72,5 +75,13 @@ public class Marks {
 
     public void setSemester(String semester) {
         this.semester = semester;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 }

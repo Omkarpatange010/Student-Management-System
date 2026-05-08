@@ -5,6 +5,7 @@ import com.example.studentmanagement.repository.MarksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MarksService {
@@ -30,5 +31,9 @@ public class MarksService {
 
     public void deleteMarks(String id) {
         marksRepository.deleteById(id);
+    }
+
+    public Optional<Marks> findById(String id) {
+        return marksRepository.findById(id);
     }
 }

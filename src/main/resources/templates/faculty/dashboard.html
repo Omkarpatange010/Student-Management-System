@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard - Student Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #0f3460 0%, #1a1a2e 100%); color: #ecf0f1; }
+        .dashboard-card { background: rgba(15, 52, 96, 0.9); border: 2px solid #00d4ff; border-radius: 15px; padding: 2rem; margin-bottom: 2rem; }
+        .stat-card { background: rgba(0, 212, 255, 0.1); border: 1px solid #00d4ff; border-radius: 10px; padding: 1.5rem; text-align: center; }
+        .stat-value { font-size: 2rem; font-weight: bold; color: #00d4ff; }
+        .stat-icon { font-size: 3rem; color: #00d4ff; margin-bottom: 1rem; }
+        .sidebar-link { color: #ecf0f1; text-decoration: none; display: block; padding: 0.75rem; border-radius: 5px; transition: background 0.3s; }
+        .sidebar-link:hover, .sidebar-link.active { background: rgba(0, 212, 255, 0.2); color: #00d4ff; }
+        .dashboard-sidebar { background: linear-gradient(180deg, #0f172a 0%, #0f3460 100%); min-height: 100vh; }
+        .sidebar-nav li { margin-bottom: 0.75rem; }
+        .sidebar-brand { color: #00d4ff; font-weight: 700; font-size: 1.5rem; }
+    </style>
+</head>
+<body class="faculty-dashboard-body">
+    <div class="container-fluid">
+        <div class="row">
+            <nav class="col-md-2 dashboard-sidebar p-3">
+                <div class="sidebar-brand mb-4">
+                    <i class="fas fa-chalkboard-teacher"></i> Faculty Panel
+                </div>
+                <ul class="sidebar-nav list-unstyled">
+                    <li><a class="sidebar-link active" href="/faculty/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                    <li><a class="sidebar-link" href="/faculty/students"><i class="fas fa-users"></i> Student Management</a></li>
+                    <li><a class="sidebar-link" href="/faculty/attendance"><i class="fas fa-calendar-check"></i> Attendance</a></li>
+                    <li><a class="sidebar-link" href="/faculty/marks"><i class="fas fa-chart-line"></i> Marks</a></li>
+                    <li><a class="sidebar-link" href="/faculty/id-card"><i class="fas fa-id-card"></i> ID Card</a></li>
+                    <li><a class="sidebar-link" href="/faculty/exam-registrations"><i class="fas fa-clipboard-check"></i> Exam Registrations</a></li>
+                    <li><a class="sidebar-link" href="/faculty/reports"><i class="fas fa-chart-bar"></i> Performance</a></li>
+                    <li><hr class="sidebar-divider my-3"></li>
+                    <li>
+                        <form th:action="@{/logout}" method="post" class="m-0">
+                            <button type="submit" class="sidebar-link w-100 text-start border-0 bg-transparent">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+            <main class="col-md-10 p-4">
+                <div class="dashboard-card">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="mb-2"><i class="fas fa-chalkboard-teacher"></i> Welcome to Faculty Dashboard</h1>
+                            <p class="text-muted mb-2">Hello, Faculty Member! You have access to manage student operations and monitor academic records.</p>
+                            <p class="text-muted"><i class="fas fa-info-circle"></i> You are logged in as: <strong>Faculty</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Navigation -->
+                    <div class="mb-4 p-3 bg-dark rounded" style="border-left: 4px solid #00d4ff;">
+                        <h5 class="mb-3"><i class="fas fa-arrows-alt"></i> Quick Navigation</h5>
+                        <div class="row">
+                            <div class="col-md-4 mb-2">
+                                <a href="/student/dashboard" class="btn btn-outline-info w-100" title="Switch to Student View">
+                                    <i class="fas fa-graduation-cap"></i> Student Dashboard
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <a href="/admin/dashboard" class="btn btn-outline-warning w-100" title="Access Admin Panel">
+                                    <i class="fas fa-cogs"></i> Admin Dashboard
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <a href="/faculty/dashboard" class="btn btn-outline-success w-100 active" title="You are here">
+                                    <i class="fas fa-chalkboard-teacher"></i> Faculty Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <h3 class="mb-3 mt-4"><i class="fas fa-chart-pie"></i> Overview</h3>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                                <h5>Total Students</h5>
+                                <p class="stat-value" th:text="${totalStudents}">0</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                                <h5>Attendance Records</h5>
+                                <p class="stat-value" th:text="${totalAttendanceRecords}">0</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-card">
+                                <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                                <h5>Marks Records</h5>
+                                <p class="stat-value" th:text="${totalMarks}">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Faculty Operations Section -->
+                    <div class="mt-4">
+                        <h3><i class="fas fa-tasks"></i> Faculty Operations</h3>
+                        <p class="text-muted mb-3">Manage student records and academic information directly from here.</p>
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/add-student" class="btn btn-primary w-100"><i class="fas fa-user-plus"></i> Add Student</a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/students" class="btn btn-secondary w-100"><i class="fas fa-users"></i> View Students</a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/attendance" class="btn btn-success w-100"><i class="fas fa-calendar-check"></i> Mark Attendance</a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/marks" class="btn btn-warning w-100"><i class="fas fa-chart-line"></i> Manage Marks</a>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/exam-registrations" class="btn btn-info w-100"><i class="fas fa-clipboard-check"></i> Exam Registrations</a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/reports" class="btn btn-dark w-100"><i class="fas fa-chart-bar"></i> View Reports</a>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <a href="/faculty/id-card" class="btn btn-light w-100" style="color: #0f3460;"><i class="fas fa-id-card"></i> Faculty ID Card</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

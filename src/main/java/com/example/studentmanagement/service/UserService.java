@@ -46,6 +46,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    public List<User> findAllByRole(String role) {
+        return userRepository.findByRole(role);
+    }
+
     public User updateUser(User user) {
         return userRepository.save(user);
     }

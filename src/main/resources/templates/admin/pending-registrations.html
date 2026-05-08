@@ -136,6 +136,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
+                            <th>Role</th>
                             <th>Course</th>
                             <th>Department</th>
                             <th>Year</th>
@@ -146,8 +147,9 @@
                         <tr th:each="data : ${pendingData}">
                             <td th:text="${data.user.fullName}"></td>
                             <td th:text="${data.user.email}"></td>
+                            <td th:text="${data.user.role}"></td>
                             <td th:text="${data.student != null ? data.student.course : 'N/A'}"></td>
-                            <td th:text="${data.student != null ? data.student.department : 'N/A'}"></td>
+                            <td th:text="${data.student != null ? data.student.department : data.user.role == 'FACULTY' ? data.user.department : 'N/A'}"></td>
                             <td th:text="${data.student != null ? data.student.year : 'N/A'}"></td>
                             <td>
                                 <form th:action="@{/admin/approve-registration}" method="post" style="display:inline;">

@@ -201,7 +201,7 @@
                         </thead>
                         <tbody>
                             <tr th:each="mark : ${marks}">
-                                <td th:text="${subjects.stream().filter(s -> s.id.equals(mark.subjectId)).findFirst().orElse(new com.example.studentmanagement.model.Subject()).courseTitle}"></td>
+                                <td th:text="${subjectTitles[mark.subjectId] ?: 'Unknown Subject'}"></td>
                                 <td th:text="${mark.externalMarks}"></td>
                                 <td th:text="${mark.internalMarks}"></td>
                                 <td th:text="${mark.externalMarks + mark.internalMarks}"></td>

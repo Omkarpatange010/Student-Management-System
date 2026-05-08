@@ -56,6 +56,8 @@ public class AuthController {
                 String role = auth.getAuthorities().iterator().next().getAuthority();
                 if ("ROLE_ADMIN".equals(role)) {
                     return "redirect:/admin/dashboard";
+                } else if ("ROLE_FACULTY".equals(role)) {
+                    return "redirect:/faculty/dashboard";
                 } else {
                     return "redirect:/student/dashboard";
                 }
@@ -79,22 +81,33 @@ public class AuthController {
                                @RequestParam String password,
                                @RequestParam String email,
                                @RequestParam String fullName,
-                               @RequestParam String course,
+                               @RequestParam(required = false) String course,
                                @RequestParam String department,
-                               @RequestParam int year,
+                               @RequestParam(required = false) Integer year,
                                @RequestParam String phone,
-                               @RequestParam String address,
+                               @RequestParam(required = false) String address,
+                               @RequestParam(required = false) String studentId,
+                               @RequestParam String role,
                                Model model) {
         if (userService.findByUsername(username).isPresent()) {
             model.addAttribute("error", "Username already exists");
             return "register";
         }
-        User user = new User(username, password, "STUDENT", email, fullName);
+        User user = new User(username, password, role, email, fullName);
         user.setStatus("pending");
+        user.setDepartment(department);
+        user.setPhone(phone);
         user = userService.saveUser(user);
-        Student student = new Student(user.getId(), null, course, department, year, phone, address);
-        studentService.saveStudent(student);
-        return "redirect:/login?pending";
+
+        if ("FACULTY".equals(role)) {
+            // Faculty registration - no additional entity needed
+            return "redirect:/login?pending";
+        } else {
+            // Student registration
+            Student student = new Student(user.getId(), studentId != null && !studentId.trim().isEmpty() ? studentId : null, course, department, year != null ? year : 0, phone, address != null ? address : "");
+            studentService.saveStudent(student);
+            return "redirect:/login?pending";
+        }
     }
 
     @GetMapping("/dashboard")
@@ -110,6 +123,8 @@ public class AuthController {
             String role = auth.getAuthorities().iterator().next().getAuthority();
             if ("ROLE_ADMIN".equals(role)) {
                 return "redirect:/admin/dashboard";
+            } else if ("ROLE_FACULTY".equals(role)) {
+                return "redirect:/faculty/dashboard";
             } else {
                 return "redirect:/student/dashboard";
             }

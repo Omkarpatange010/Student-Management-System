@@ -10,9 +10,14 @@ import com.example.studentmanagement.service.StudentService;
 import com.example.studentmanagement.service.UserService;
 import com.example.studentmanagement.service.AttendanceService;
 import com.example.studentmanagement.service.MarksService;
+import com.example.studentmanagement.service.ReportService;
 import com.example.studentmanagement.service.SubjectService;
 import com.example.studentmanagement.service.ExamRegistrationService;
+import com.example.studentmanagement.service.ExamSettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -29,6 +34,8 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 @Controller
 @RequestMapping("/student")
@@ -52,19 +59,33 @@ public class StudentController {
     @Autowired
     private ExamRegistrationService examRegistrationService;
 
+    @Autowired
+    private ExamSettingsService examSettingsService;
+
+    @Autowired
+    private ReportService reportService;
+
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         Optional<User> userOpt = userService.findByUsername(username);
         if (userOpt.isPresent()) {
-            Optional<Student> studentOpt = studentService.findByUserId(userOpt.get().getId());
+            User user = userOpt.get();
+            Optional<Student> studentOpt = studentService.findByUserId(user.getId());
             if (studentOpt.isPresent()) {
                 model.addAttribute("student", studentOpt.get());
-                model.addAttribute("user", userOpt.get());
+                model.addAttribute("user", user);
+                return "student/dashboard";
+            }
+            String role = auth.getAuthorities().iterator().next().getAuthority();
+            if ("ROLE_ADMIN".equals(role)) {
+                return "redirect:/admin/dashboard";
+            } else if ("ROLE_FACULTY".equals(role)) {
+                return "redirect:/faculty/dashboard";
             }
         }
-        return "student/dashboard";
+        return "redirect:/login?error";
     }
 
     @GetMapping("/profile")
@@ -83,6 +104,9 @@ public class StudentController {
                 List<Subject> semester2Subjects = subjectService.getSubjectsBySemester("MCA Semester II");
                 model.addAttribute("semester1Subjects", semester1Subjects);
                 model.addAttribute("semester2Subjects", semester2Subjects);
+                
+                // Check if exam registration is enabled
+                model.addAttribute("examRegistrationEnabled", examSettingsService.isExamRegistrationEnabled());
             }
         }
         return "student/profile";
@@ -134,18 +158,27 @@ public class StudentController {
     public String marks(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
+        List<Marks> marks = new ArrayList<>();
+        Map<String, String> subjectTitles = new HashMap<>();
+
         Optional<User> userOpt = userService.findByUsername(username);
         if (userOpt.isPresent()) {
             Optional<Student> studentOpt = studentService.findByUserId(userOpt.get().getId());
             if (studentOpt.isPresent()) {
-                List<Marks> marks = marksService.getMarksByStudent(studentOpt.get().getId());
+                marks = marksService.getMarksByStudent(studentOpt.get().getId());
                 List<Subject> subjects = subjectService.getAllSubjects();
-                model.addAttribute("marks", marks);
-                model.addAttribute("subjects", subjects);
+                for (Subject subject : subjects) {
+                    if (subject != null && subject.getId() != null) {
+                        subjectTitles.put(subject.getId(), subject.getCourseTitle());
+                    }
+                }
                 model.addAttribute("student", studentOpt.get());
                 model.addAttribute("user", userOpt.get());
             }
         }
+
+        model.addAttribute("marks", marks);
+        model.addAttribute("subjectTitles", subjectTitles);
         return "student/marks";
     }
 
@@ -181,6 +214,28 @@ public class StudentController {
         return "student/id-card";
     }
 
+    @GetMapping("/report")
+    public ResponseEntity<byte[]> downloadReport() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        Optional<User> userOpt = userService.findByUsername(username);
+        if (userOpt.isPresent()) {
+            Optional<Student> studentOpt = studentService.findByUserId(userOpt.get().getId());
+            if (studentOpt.isPresent()) {
+                try {
+                    byte[] pdf = reportService.generateStudentReport(studentOpt.get(), userOpt.get(), marksService.getMarksByStudent(studentOpt.get().getId()), attendanceService.getAttendanceByStudent(studentOpt.get().getId()));
+                    return ResponseEntity.ok()
+                            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report-card-" + studentOpt.get().getStudentId() + ".pdf")
+                            .contentType(MediaType.APPLICATION_PDF)
+                            .body(pdf);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return ResponseEntity.internalServerError().build();
+    }
+
     @PostMapping("/add-subject")
     public String addSubject(@RequestParam String courseTitle,
                              @RequestParam String courseCode,
@@ -199,6 +254,12 @@ public class StudentController {
     public String registerExam(@RequestParam String semester,
                                @RequestParam(value = "subjects", required = false) String[] subjects,
                                Model model) {
+        // Check if exam registration is enabled
+        if (!examSettingsService.isExamRegistrationEnabled()) {
+            model.addAttribute("error", "Exam registration is currently not available. Please check back later.");
+            return "redirect:/student/profile";
+        }
+        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         Optional<User> userOpt = userService.findByUsername(username);

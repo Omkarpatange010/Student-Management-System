@@ -93,96 +93,184 @@
             <div class="card-header text-center">
                 <i class="fas fa-user-plus fa-3x mb-3 text-primary"></i>
                 <h3 class="card-title">Join Us</h3>
-                <p class="card-subtitle">Create Your Student Account</p>
+                <p class="card-subtitle">Create Your Account</p>
             </div>
             <div class="card-body">
-                <form th:action="@{/register}" method="post" class="login-form">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="username" class="form-label">
-                                    <i class="fas fa-user"></i> Username
-                                </label>
-                                <input type="text" class="form-control form-input" id="username" name="username" required placeholder="Choose username">
+                <ul class="nav nav-tabs" id="registerTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="student-tab" data-bs-toggle="tab" data-bs-target="#student" type="button" role="tab" aria-controls="student" aria-selected="true">Student Registration</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="faculty-tab" data-bs-toggle="tab" data-bs-target="#faculty" type="button" role="tab" aria-controls="faculty" aria-selected="false">Faculty Registration</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="registerTabsContent">
+                    <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="student-tab">
+                        <form th:action="@{/register}" method="post" class="login-form mt-3">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden" name="role" value="STUDENT">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-username" class="form-label">
+                                            <i class="fas fa-user"></i> Username
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="student-username" name="username" required placeholder="Choose username">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-password" class="form-label">
+                                            <i class="fas fa-lock"></i> Password
+                                        </label>
+                                        <input type="password" class="form-control form-input" id="student-password" name="password" required placeholder="Create password">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="password" class="form-label">
-                                    <i class="fas fa-lock"></i> Password
-                                </label>
-                                <input type="password" class="form-control form-input" id="password" name="password" required placeholder="Create password">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-email" class="form-label">
+                                            <i class="fas fa-envelope"></i> Email
+                                        </label>
+                                        <input type="email" class="form-control form-input" id="student-email" name="email" required placeholder="your@email.com">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-fullName" class="form-label">
+                                            <i class="fas fa-id-card"></i> Full Name
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="student-fullName" name="fullName" required placeholder="Full name">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-course" class="form-label">
+                                            <i class="fas fa-book"></i> Course
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="student-course" name="course" required placeholder="Course name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-department" class="form-label">
+                                            <i class="fas fa-building"></i> Department
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="student-department" name="department" required placeholder="Department">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-studentId" class="form-label">
+                                            <i class="fas fa-id-badge"></i> Student ID
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="student-studentId" name="studentId" required placeholder="Student ID">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-year" class="form-label">
+                                            <i class="fas fa-calendar"></i> Year
+                                        </label>
+                                        <input type="number" class="form-control form-input" id="student-year" name="year" placeholder="Year (optional)">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-phone" class="form-label">
+                                            <i class="fas fa-phone"></i> Phone
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="student-phone" name="phone" required placeholder="Phone number">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="student-address" class="form-label">
+                                            <i class="fas fa-map-marker-alt"></i> Address
+                                        </label>
+                                        <textarea class="form-control form-input" id="student-address" name="address" rows="1" placeholder="Address"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-login w-100">
+                                <i class="fas fa-user-plus"></i> Register as Student
+                            </button>
+                        </form>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="email" class="form-label">
-                                    <i class="fas fa-envelope"></i> Email
-                                </label>
-                                <input type="email" class="form-control form-input" id="email" name="email" required placeholder="your@email.com">
+                    <div class="tab-pane fade" id="faculty" role="tabpanel" aria-labelledby="faculty-tab">
+                        <form th:action="@{/register}" method="post" class="login-form mt-3">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <input type="hidden" name="role" value="FACULTY">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="faculty-username" class="form-label">
+                                            <i class="fas fa-user-tie"></i> Username
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="faculty-username" name="username" required placeholder="Choose username">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="faculty-password" class="form-label">
+                                            <i class="fas fa-lock"></i> Password
+                                        </label>
+                                        <input type="password" class="form-control form-input" id="faculty-password" name="password" required placeholder="Create password">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="fullName" class="form-label">
-                                    <i class="fas fa-id-card"></i> Full Name
-                                </label>
-                                <input type="text" class="form-control form-input" id="fullName" name="fullName" required placeholder="Full name">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="faculty-email" class="form-label">
+                                            <i class="fas fa-envelope"></i> Email
+                                        </label>
+                                        <input type="email" class="form-control form-input" id="faculty-email" name="email" required placeholder="your@email.com">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="faculty-fullName" class="form-label">
+                                            <i class="fas fa-id-card"></i> Full Name
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="faculty-fullName" name="fullName" required placeholder="Full name">
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="faculty-phone" class="form-label">
+                                            <i class="fas fa-phone"></i> Phone
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="faculty-phone" name="phone" required placeholder="Phone number">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group mb-3">
+                                        <label for="faculty-department" class="form-label">
+                                            <i class="fas fa-building"></i> Department
+                                        </label>
+                                        <input type="text" class="form-control form-input" id="faculty-department" name="department" required placeholder="Department">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" role="alert">
+                                <i class="fas fa-info-circle"></i> <strong>Note:</strong> Your registration request will be reviewed by an Admin. You will receive approval notification once verified.
+                            </div>
+                            <button type="submit" class="btn btn-login w-100">
+                                <i class="fas fa-user-plus"></i> Register as Faculty
+                            </button>
+                        </form>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="course" class="form-label">
-                                    <i class="fas fa-book"></i> Course
-                                </label>
-                                <input type="text" class="form-control form-input" id="course" name="course" required placeholder="Course name">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="department" class="form-label">
-                                    <i class="fas fa-building"></i> Department
-                                </label>
-                                <input type="text" class="form-control form-input" id="department" name="department" required placeholder="Department">
-                            </div>
-                        </div>
-                    </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="year" class="form-label">
-                                    <i class="fas fa-calendar"></i> Year
-                                </label>
-                                <input type="number" class="form-control form-input" id="year" name="year" required placeholder="Year">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="phone" class="form-label">
-                                    <i class="fas fa-phone"></i> Phone
-                                </label>
-                                <input type="text" class="form-control form-input" id="phone" name="phone" required placeholder="Phone number">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label for="address" class="form-label">
-                                    <i class="fas fa-map-marker-alt"></i> Address
-                                </label>
-                                <textarea class="form-control form-input" id="address" name="address" required placeholder="Your address"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-login w-100 mt-3">
-                        <i class="fas fa-user-plus"></i> Register
-                    </button>
-                </form>
+                </div>
                 <div class="text-center mt-4">
                     <a href="/login" class="register-link">
                         <i class="fas fa-sign-in-alt"></i> Already have an account? Login
